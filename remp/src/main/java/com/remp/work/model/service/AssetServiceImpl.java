@@ -39,23 +39,70 @@ public class AssetServiceImpl implements AssetService {
 	}
 	
 	public ArrayList<Product> getRepairList(){
-		return assetsDao.selectRepairList();
+		ArrayList<Product> list = assetsDao.selectRepairList();
+		for(int i = 0 ; i < list.size() ; i++) {
+			switch (list.get(i).getState()) {
+			case "wa_check":
+				list.get(i).setState("점검대기");
+				break;
+			case "wa_product":
+				list.get(i).setState("내부수리완료");
+				break;
+			case "wa_repair":
+				list.get(i).setState("수리대기");
+				break;
+			case "re_exoutput":
+				list.get(i).setState("외부수리");
+				break;
+			case "re_disuse":
+				list.get(i).setState("수리불가능");
+				break;
+			default :
+			}
+		}
+		return list;
 	}
 	
 	public List<Map<String,String>> searchRepairList(String keyword, String selectName){
-		return assetsDao.selectRepairList(keyword,selectName);
+		List<Map<String,String>> list = assetsDao.selectRepairList(keyword,selectName);
+		for (Map<String,String> map : list) {
+			switch (map.get("state")) {
+			case "wa_check":
+				map.put("state", "점검대기");
+				break;
+			case "wa_product":
+				map.put("state", "내부수리완료");
+				break;
+			case "wa_repair":
+				map.put("state", "수리대기");
+				break;
+			case "re_exoutput":
+				map.put("state", "외부수리");
+				break;
+			case "re_disuse":
+				map.put("state", "수리불가능");
+				break;
+			default:
+			}
+		}
+		return list;
 	}
 	
-	public Map<String, String> getRepairForm(String productId){
-		return assetsDao.selectRepairForm(productId);
+	public Map<String, String> getRepairForm(String productId, String productState){
+		switch(productState) {
+		case "점검대기":
+			productState = "wa_check";
+			break;
+		case "수리대기":
+			productState = "wa_repair";
+			break;
+		default :
+		}
+		return assetsDao.selectRepairForm(productId, productState);
 	}
 	
 	public List<Map<String,String>> getRepairPartsList(String itemId){
-		return assetsDao.selectRepairPartsList(itemId);
-	}
-	
-	public int addRepairResult(String itName, String productId, String engineerId, String engineerName, String repairSort, String repairContent) {
-		return assetsDao.insertRepairResult(itName, productId, engineerId, engineerName, repairSort, repairContent);
+		return assetsDao.selectRepairPartsList(itemId );
 	}
 	
 	public int updateProductState(String productId, String repairSort) {
@@ -70,9 +117,8 @@ public class AssetServiceImpl implements AssetService {
 		return assetsDao.selectAllRepairResult(engineerId);
 	}
 	
-	public int insertCustomerBuy(String customerId, String itemId, String price, String startDate, String endDate, String post, String address, String addressDetail, String paymentMethod, String cardSort, String cardNum, String bankSort, String accountNum) {
-		return assetsDao.insertCustomerBuy(customerId, itemId, price, startDate, endDate, post, address, addressDetail, 
-				paymentMethod, cardSort, cardNum, bankSort, accountNum);
+	public int insertCustomerBuy(Map<String, String> rentalInfo) {
+		return assetsDao.insertCustomerBuy(rentalInfo);
 	}
 	
 	public List<Map<String, String>> getRepairResult(String type, String keyword){
@@ -84,7 +130,12 @@ public class AssetServiceImpl implements AssetService {
 	}
 	
 	public int insertOutput(Map<String, String> map) {
-		return assetsDao.insertOutput(map);
+		return assetsDao.insertCustomerBuyOutput(map);
+	}
+
+	@Override
+	public int addRepairResult(Map<String, Object> formInput, Map<String, String> partsInput) {
+		return assetsDao.insertRepairResult(formInput, partsInput);
 	}
 
 	

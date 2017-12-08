@@ -119,6 +119,138 @@ function dateLock(element){
 	}
 	$("#end").attr('min', year+'-'+month+'-'+date);
 }
+/* ------------------------- UI 관련 ------------------------- */
+/* 메시지창
+ * 작성자 : 김재림
+ * 버  전 : v 1.2
+ */
+const MsgWindow = class MsgWindow {
+	/* 전역변수
+	 * windowType - 창타입
+	 * msgWindow - 메시지창 객체
+	 * msgWindowHead - 헤드영역
+	 * msgWindowDetail - 디테일영역
+	 * msgWindowAction - 액션영역
+	 */
+	//생성자
+	constructor(windowType) {
+		if (windowType == null) {
+			this.windowType == 'plain';
+		}
+		this.windowType = windowType.toLowerCase();
+	}
+	//창속성 기본 메시지창, violated : 정책위반창, Error : 에러창, Invalid : 무효창
+	setWindowType(windowType) {
+		if (windowType == null) {
+			this.windowType == 'plain';
+		}
+		this.windowType = windowType.toLowerCase();
+		this.msgWindowHead.removeAttr('class');
+		this.msgWindowHead.attr('class', 'msgWindowHead '+this.windowType);
+	}
+	//현재설정된 메시지창 타입
+	getWindowType() {
+		return this.windowType;
+	}
+	//타이틀 및 메시지내용 설정
+	setMessage(msgWindowHeadText, msgWindowDetialText) {
+		if (msgWindowHeadText == null) {
+			msgWindowHeadText == "정보"
+		}
+		if (this.windowType == null) {
+			this.windowType = "plain";
+		} else {
+			switch (this.windowType) {
+			case "violated":
+				msgWindowHeadText = "[정책위반] "+msgWindowHeadText;
+				break;
+			case "error":
+				msgWindowHeadText = "[오류] "+msgWindowHeadText;
+				break;
+			case "invalid":
+				msgWindowHeadText = "[무효] "+msgWindowHeadText;
+				break;
+			default:
+				msgWindowHeadText = "[메세지] "+msgWindowHeadText;
+				break;
+			}
+		}
+		if (msgWindowDetialText == null || msgWindowDetialText == "") {
+			this.msgWindowDetialText = "---------------------------------------메시지 영역---------------------------------------";
+		}
+		this.msgWindowHead = $('<div />', {class: 'msgWindowHead '+this.windowType, onclick: 'MsgWindow.onTop(this)'});
+		this.msgWindowDetail = $('<div />', {class: 'msgWindowDetail'});
+		$(this.msgWindowHead).append($('<span />', {class: 'msgWindowHead-text', text: msgWindowHeadText}));
+		$(this.msgWindowDetail).append($('<div />', {class: 'msgWindowDetail-text', text: msgWindowDetialText}));
+	}
+	//타이틀 및 메시지내용 출력
+	getMessage() {
+		return "제목 : "+this.msgWindowHeadText+", 내용 : "+this.msgWindowDetialText;
+	}
+	//버튼 설정
+	setButton(buttonText, callbackFn) {
+		if (this.msgWindowAction == null) {
+			this.msgWindowAction = $('<div />', {class: 'msgWindowAction'});
+		}
+		if (buttonText == null) {
+			buttonText == '확인';
+		}
+		if (callbackFn == null) {
+			callbackFn = this.remove();
+		}
+		$(this.msgWindowAction).append($('<input />', {class: 'btn btn-primary btn-sm msgBtn', type: 'button', value: buttonText, onclick: callbackFn}));
+	}
+	//화면에 창 설정하기
+	show() {
+		if (this.msgWindowHead == null || this.msgWindowDetail == null) {
+			this.setMessage(null, null);
+		}
+		$("body").append(this.createMsgWindow(this.windowType, this.msgWindowHead, this.msgWindowDetail));
+		$(this.msgWindowAction).children()[0].focus();
+	}
+	//화면에서 숨기기
+	static hide(takeElement) {
+		debug(takeElement);
+		$(takeElement).parents('div.msgWindow').fadeOut('fast');
+		setTimeout(function() {
+			$(takeElement).parents('div.msgWindow').remove();
+		}, '3000', takeElement);
+	}
+	//객체삭제
+	static remove(takeElement) {
+		$(takeElement).parents('div.msgWindow').remove();
+	}
+	//상단으로 가져오기
+	static onTop(takeElement) {
+		$('.msgWindow').css('z-index', 'auto');
+		$(takeElement).parents('.msgWindow').css('z-index', 1);
+	}
+	//메시지 객체 생성
+	createMsgWindow() {
+		this.msgWindow = $('<div />', {class: 'msgWindow'});
+		$(this.msgWindow).append(this.msgWindowHead);
+		$(this.msgWindow).append(this.msgWindowDetail);
+		$(this.msgWindow).append(this.msgWindowAction);
+		$(this.msgWindow).draggable();
+		return this.msgWindow;
+	}
+	
+	toString() {
+		return 'windowType : '+ this.windowType +
+			', msgWindowHead : '+ this.msgWindowHead +
+			', msgWindowDetail : '+ this.msgWindowDetail +
+			', msgWindowAction : '+ this.msgWindowAction;
+	}
+	//객체초기화
+	initialize() {
+		 this.windowType = null;
+		 this.msgWindow = null;
+		 this.msgWindowHead = null;
+		 this.msgWindowDetail = null;
+		 this.msgWindowAction = null;
+	}
+}
+
 /* ajax 관련 설정 */
 var loading = {
 	on: $('<div />', {class: 'loading'}),
@@ -127,18 +259,24 @@ var loading = {
 /* head_detail에서 head 일련번호 세팅하기 */
 var headSeq = null;
 var selectedHeadSeq = null;
+var headElement = null;
 
 function setHeadSeqRequest(takeElement) {
-	var callbackfunction = $(takeElement).data("fn-name");//data-fn-name=?
-	headSeq = $(takeElement).data("key");//data-key=?
+	debugger;
+	headElement = takeElement;
+	var callbackfunction = $(takeElement).data("fn-name"); //data-fn-name=?
+	if (callbackfunction.substr(callbackfunction.length - 1) != ')') {
+		callbackfunction += "(headSeq)";
+	}
+	headSeq = $(takeElement).data("key"); // data-key=?
 	debug(headSeq);
 	$(takeElement).parents("table")
 		.children()
 		.children(".table-success")
 		.removeClass("table-success");
 	$(takeElement).addClass("table-success");
-	debug(callbackfunction+"(headSeq)");
-	eval(callbackfunction+"(headSeq)");
+	debug(callbackfunction);
+	eval(callbackfunction);
 }
 
 function getHeadSeqRequest(){
@@ -412,8 +550,8 @@ function getRepairList(){
 			debug(rData.length);
 			debug(rData);
 			for (var i = 0; i < rData.length; i++) {
-				ihtml += "<tr data-fn-name='getrepairform' data-key='"+rData[i].id+"' onclick='setHeadSeqRequest(this)'>";
-				ihtml += "<td>"+rData[i].id+"</td><td>"+rData[i].name+"</td>"+"<td>"+rData[i].state+"</td><td>"+rData[i].date+"</td>";
+				ihtml += "<tr data-fn-name='getrepairform(headElement)' data-key='"+rData[i].id+ "'data-itid='"+rData[i].itemId+"'data-productstate='"+rData[i].state+"'data-itname='"+rData[i].itemName+"' onclick='setHeadSeqRequest(this)'>";
+				ihtml += "<td>"+rData[i].id+"</td><td>"+rData[i].itemName+"</td>"+"<td>"+rData[i].state+"</td><td>"+rData[i].date+"</td>";
 				ihtml += "</tr>";
 			}
 			debug(ihtml);
@@ -428,11 +566,12 @@ function getRepairList(){
 	});
 }
 /* 점검내역 폼 가져오기*/
-function getrepairform(key){
-	var takeData = key;
+function getrepairform(takeElement){
+	var takeData = $(takeElement).data('key');
 	var requestURL = "getrepairform.do";
 	var sData = JSON.stringify({
-		id:takeData
+		id:takeData,
+		state:$(takeElement).data('productstate')
 	});
 	debug(sData);
 	debug(requestURL);
@@ -451,9 +590,10 @@ function getrepairform(key){
 			$("#itemId").val(rData.itemId);
 			$("#itemName").val(rData.itemName);
 			$("#repairDate").val(rData.todayDate);
+			$("#repairContents").val(rData.repairContent);
 		},
 		error : function() {
-			alert("실패!");
+			alert("폼으로 가져오기 실패!");
 		},
 		complete : function() {
 			$(".loading").remove();
@@ -482,6 +622,7 @@ function getPartsList(key){
 	var requestURL = "getpartslist.do";
 	var sData = JSON.stringify({
 		id:takeData
+		
 	});
 	debug(sData);
 	debug(requestURL);
@@ -531,7 +672,7 @@ function getPartsList(key){
 			}
 		},
 		error : function() {
-			alert("실패!");
+			alert("부품가져오기 실패!");
 		},
 		complete : function() {
 			$(".loading").remove();
@@ -541,22 +682,21 @@ function getPartsList(key){
 
 /* 수리내역 등록 */
 function addRepairResult() {
+	debug(getUsePartsList("form[name=partsInputForm]"));
 	var requestURL = "addrepairresult.do";
-	var sData = getUsePartsList("#repairResultForm");
-	/*var sData = JSON.stringify({
-	//	repairid = $("#productId").val(),
-		itname:$("#itemName").val(),
-		productid:$("#productId").val(),
-		engineerid:$("#engineerId").val(),
-		engineername:$("#engineerName").val(),
-		repairsort:$("#repairSort").val(),
-		//state = $("#productId").val(),
-		//repairdate = $("#repairDate").val(),
-		repaircontent:$("#repairContents").val(),
-		//list:$("#parts input").serializeArray()
-		getUsePartsList("#repairForm input")
-		
-	});*/
+	/*var sData = getUsePartsList("#repairResultForm");*/
+	var sData = JSON.stringify({
+		repairId:$("#productId").val(),
+		itName:$("#itemName").val(),
+		productId:$("#productId").val(),
+		engineerId:$("#engineerId").val(),
+		engineerName:$("#engineerName").val(),
+		repairSort:$("#repairSort").val(),
+		state:$("#productId").val(),
+		repairDate:$("#repairDate").val(),
+		repairContent:$("#repairContents").val(),
+		list:JSON.parse(getUsePartsList("form[name=partsInputForm]"))
+	});
 	debug(sData);
 	debug(requestURL);
 	$.ajax({
@@ -570,11 +710,38 @@ function addRepairResult() {
 			$("#content").append(loading.on);
 		},
 		success : function(rData) {
-			alert(rData.result);
+			switch (rData.result) {
+			case "success":
+				msgBox = new MsgWindow('plain');
+				msgBox.setMessage('점검등록성공!',' 점검결과가 정상적으로 등록되었습니다.');
+				msgBox.setButton('확인','MsgWindow.hide(this)');
+				msgBox.show();
+				break;
+			case "invalid":
+				var msg = new MsgWindow('invalid');
+				msg.setMessage('점검등록오류','입력한 점검결과가 존재하지 않거나, 변경할 수 없는 상태입니다.');
+				msg.setButton('확인','MsgWindow.hide(this)');
+				msg.show();
+				break;
+			case "violated":
+				var msg = new MsgWindow('violated');
+				msg.setMessage('정책위반','정책위반이 발생하였습니다.');
+				msg.setButton('확인','MsgWindow.hide(this)');
+				msg.show();
+				break;
+			case "network":
+				var msg = new MsgWindow('error');
+				msg.setMessage('네트워크 오류','네트워크에 문제가 있습니다. 관리자에게 문의하십시오.');
+				msg.setButton('확인','MsgWindow.hide(this)');
+				msg.show();
+				break;
+			}
 		},
 		error : function() {
-			
-			alert("입력 필수입니다.");
+			var msg = new MsgWindow('error');
+			msg.setMessage('AJax 통신 오류','현재 서버와 연결이 원활하지 않아, 요청한 기능을 수행할 수 없습니다. 잠시후 다시 시도하여 주십시요.');
+			msg.setButton('확인','MsgWindow.hide(this)');
+			msg.show();
 		},
 		complete : function() {
 			$(".loading").remove();
@@ -619,16 +786,44 @@ function getPost() {
         }
     }).open();
 }
-/**/
+
+/*json으로 가져오기*/
 function getUsePartsList(form){
 	var jsonstr = "{";
-	$.each($(form).serializeArray(), function(index, item){
-		if(item.value != 0){
-			jsonstr += ""+item.name+":"+item.value+","}
-		});
-	//jsonstr += "\"\":\"\"}";
-	jsonstr += "}";
+	$.each($(form).serializeArray(), function(index, item){ if(item.value != 0) { jsonstr += '"'+item.name+'":"'+item.value+'",'; }});
+	jsonstr = jsonstr.substr(0, jsonstr.length - 1) + "}";
 	return jsonstr;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
 
 /* 모든 부속품 리스트 가져오기*/
@@ -722,8 +917,9 @@ function getAllRepairResultList(){
 				ihtml += "<td>"+row.repairId+
 					"</td><td>"+row.itemName+
 					"</td><td>"+row.productId+
+					"</td><td>"+row.repairContent+
 					"</td><td>"+row.repairDate+
-					"</td><td>"+row.repairState+"</td></tr>";
+					"</td><td>"+row.repairSort+"</td></tr>";
 			}
 			debug(ihtml);
 			$("#repairResultList").html(ihtml);
@@ -835,6 +1031,7 @@ function getRepairResultList(){
 				ihtml += "<td>"+row.repairId+
 					"</td><td>"+row.itemName+
 					"</td><td>"+row.productId+
+					"</td><td>"+row.repairContent+
 					"</td><td>"+row.repairDate+
 					"</td><td>"+row.repairSort+"</td></tr>";
 			}

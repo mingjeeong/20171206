@@ -49,6 +49,7 @@
 			<th>점검id</th>
 			<th>제품명</th>
 			<th>자산id</th>
+			<th>점검내역</th>
 			<th>수리일자</th>
 			<th>상태</th>
 		</tr>

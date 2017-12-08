@@ -10,7 +10,7 @@
 		<span class="btn btn-secondary">입고요청조회</span>
 	</div>
 	<div class="left-w70">
-		<input type="text" id="searchInput" class="form-control" placeholder="제품명 입력">
+		<input type="text" id="searchInput" class="form-control" placeholder="통합검색">
 	</div>
 	<div class="left-w10">
 		<input type="button" class="btn btn-primary" value="검색" onclick="searchInputRequest()">
@@ -26,7 +26,7 @@
 				<th>제품명</th>
 				<th>수량</th>
 				<th>요청일자</th>
-				<th>인수자</th>
+				<th>인계자</th>
 				<th>입고</th>
 			</tr>
 		</thead>

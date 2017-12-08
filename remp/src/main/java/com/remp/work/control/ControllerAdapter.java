@@ -1,6 +1,8 @@
 package com.remp.work.control;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +47,9 @@ public abstract class ControllerAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(ControllerAdapter.class);
 	
 	//---------------------- 기능 --------------------------------
-	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public abstract ModelAndView home();
 	
-
 	
 	
 	//---------------------- 유틸리티 --------------------------------
@@ -84,11 +84,11 @@ public abstract class ControllerAdapter {
 	
 	//사용자시스템 템플릿
 	protected ModelAndView getPlainRedPage(String content) {
-		return getInnerPage(SERVICE_PATH + content);
+		return getInnerPage(null, null, SERVICE_PATH + content, PLAIN_RED);
 	}
 	
 	protected ModelAndView getPlainRedPage(ModelAndView mav, String content) {
-		return getInnerPage(mav, null, SERVICE_PATH + content, PLAIN);
+		return getInnerPage(mav, null, SERVICE_PATH + content, PLAIN_RED);
 	}
 	
 	protected ModelAndView getHeadDetailRedPage(String headContent, String detailContent) {
@@ -138,6 +138,137 @@ public abstract class ControllerAdapter {
 		mav.setViewName(templeteId);
 		return mav;
 	}
-
-
+	
+	//DBMS transaction controller
+	protected Map<String, String> isUpdatedToMap(int result) {
+		Map<String, String> returnValue = new HashMap<>();
+		StringBuilder value = new StringBuilder();
+		if (result == 1) {
+			value.append("success");
+		} else if (result == 0) {
+			value.append("invalid");
+		} else if (result > 1) {
+			value.append("violated");
+		} else {
+			value.append("network");
+		}
+		returnValue.put("result", value.toString());
+		return returnValue;
+	}
+	
+	protected Map<String, String> areUpdatedToMap(int result) {
+		Map<String, String> returnValue = new HashMap<>();
+		StringBuilder value = new StringBuilder();
+		if (result >= 1) {
+			value.append("success");
+		} else if (result == 0) {
+			value.append("invalid");
+		} else {
+			value.append("network");
+		}
+		returnValue.put("result", value.toString());
+		return returnValue;
+	}
+	
+	protected boolean isUpdated(int result) {
+		if (result == 1) {
+			return true;
+		}
+		return false;
+	}
+	
+	protected boolean areUpdated(int result) {
+		if (result >= 1) {
+			return true;
+		}
+		return false;
+	}
+	
+	protected Map<String, String> isInsertedToMap(int result) {
+		Map<String, String> returnValue = new HashMap<>();
+		StringBuilder value = new StringBuilder();
+		if (result == 1) {
+			value.append("success");
+		} else if (result == 0) {
+			value.append("invalid");
+		} else if (result > 1) {
+			value.append("violated");
+		} else {
+			value.append("network");
+		}
+		returnValue.put("result", value.toString());
+		return returnValue;
+	}
+	
+	protected Map<String, String> areInsertedToMap(int result) {
+		Map<String, String> returnValue = new HashMap<>();
+		StringBuilder value = new StringBuilder();
+		if (result >= 1) {
+			value.append("success");
+		} else if (result == 0) {
+			value.append("invalid");
+		} else {
+			value.append("network");
+		}
+		returnValue.put("result", value.toString());
+		return returnValue;
+	}
+	
+	protected boolean isInserted(int result) {
+		if (result == 1) {
+			return true;
+		}
+		return false;
+	}
+	
+	protected boolean areInserted(int result) {
+		if (result >= 1) {
+			return true;
+		}
+		return false;
+	}
+	
+	protected Map<String, String> isDeletedToMap(int result) {
+		Map<String, String> returnValue = new HashMap<>();
+		StringBuilder value = new StringBuilder();
+		if (result == 1) {
+			value.append("success");
+		} else if (result == 0) {
+			value.append("invalid");
+		} else if (result > 1) {
+			value.append("violated");
+		} else {
+			value.append("network");
+		}
+		returnValue.put("result", value.toString());
+		return returnValue;
+	}
+	
+	protected Map<String, String> areDeletedToMap(int result) {
+		Map<String, String> returnValue = new HashMap<>();
+		StringBuilder value = new StringBuilder();
+		if (result >= 1) {
+			value.append("success");
+		} else if (result == 0) {
+			value.append("invalid");
+		} else {
+			value.append("network");
+		}
+		returnValue.put("result", value.toString());
+		return returnValue;
+	}
+	
+	protected boolean isDeleted(int result) {
+		if (result == 1) {
+			return true;
+		}
+		return false;
+	}
+	
+	protected boolean areDeleted(int result) {
+		if (result >= 1) {
+			return true;
+		}
+		return false;
+	}
 }

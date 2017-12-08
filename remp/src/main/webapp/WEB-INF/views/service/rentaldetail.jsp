@@ -16,8 +16,8 @@
 			RempUtility ru = new RempUtility();
 			%>
 			<div style="padding: 20px;">
-				<div>모델명 : ${dto.getCode()}</div>
-				<div>모델명 : ${dto.getName()}<hr></div>
+				<div>${dto.getCode()}</div>
+				<div>${dto.getName()}<hr></div>
 				<div>제조사 : ${dto.getManufacturer()}<hr></div>
 				<div>렌탈가격 <span style="color: darkred;">월${price}원</span><hr></div>
 				<div>*${dto.getPeriod()}개월 약정</div>

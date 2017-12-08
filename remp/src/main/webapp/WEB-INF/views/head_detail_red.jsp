@@ -4,7 +4,7 @@
 <html>
 <head>
 <title>Home</title>
-	<link rel="stylesheet" type="text/css" href="resources/css/sandstone/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="resources/css/simplex/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="resources/css/core.css">
 	<link rel="stylesheet" type="text/css" href="resources/css/jquery-ui.css">
 	<script src="resources/js/jquery-3.2.1.js"></script>

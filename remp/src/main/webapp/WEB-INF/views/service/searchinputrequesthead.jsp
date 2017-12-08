@@ -19,11 +19,11 @@
 				<td>1</td>
 				<td>신규자산</td>
 			</tr>
-			<tr data-fn-name="getInputRequest" data-key="re_return" onclick="setHeadSeqRequest(this)">
+			<tr data-fn-name="getInputRequest" data-key="re_reinput" onclick="setHeadSeqRequest(this)">
 				<td>2</td>
 				<td>회수자산</td>
 			</tr>
-			<tr data-fn-name="getInputRequest" data-key="re_repair" onclick="setHeadSeqRequest(this)">
+			<tr data-fn-name="getInputRequest" data-key="re_exinput" onclick="setHeadSeqRequest(this)">
 				<td>3</td>
 				<td>방출수리자산</td>
 			</tr>

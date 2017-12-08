@@ -127,3 +127,57 @@ span.space{
 div.space{
 	margin: 0 3px;
 }
+
+/* 메시지창 */
+div.msgWindow {
+	position: fixed !important;
+	top: 30%;
+	left: 40%;
+	background: rgba(0, 0, 0, .8) no-repeat 50%;
+	padding: 3px;
+	box-shadow: 10px 10px 5px #495057b8;
+	border-radius: 5px;
+}
+
+.violated {
+	background: #e44742 !important;
+}
+
+.error {
+	background: #e44742 !important;
+}
+
+.invalid {
+	background: #495057 !important;
+}
+
+.msgBtn {
+	margin-right: 3px;
+}
+
+.msgWindowHead {
+	width: 300px;
+	height: 30px;
+	background: #5abf53;
+}
+
+.msgWindowHead-text {
+	padding-left: 5px;
+	line-height: 30px;
+	vertical-align: middle;
+	color: white;
+	font-weight: bold;
+}
+
+.msgWindowDetail {
+	width: 300px;
+	padding: 10px;
+	min-height: 70px;
+	background: white;
+	margin-bottom: 3px;
+}
+
+.msgWindowDetail-text {
+	margin: 0 auto;
+	color: gray;
+}

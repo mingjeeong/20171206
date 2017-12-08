@@ -8,7 +8,7 @@
 		<span class="btn btn-secondary">입고조회</span>
 	</div>
 	<div class="left-w70">
-		<input type="text" id="searchInput" class="form-control" placeholder="제품명 입력">
+		<input type="text" id="searchInput" class="form-control" placeholder="통합검색">
 	</div>
 	<div class="left-w10">
 		<input type="button" class="btn btn-primary" value="검색" onclick="searchInput()">

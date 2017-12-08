@@ -33,7 +33,7 @@
 		 	if(list != null){
 		 	for(int i=0 ; i<list.size() ; i++){
 		 %>
-		 <tr data-fn-name='getrepairform' data-key='<%=list.get(i).getId()%>' data-itid='<%=list.get(i).getItId()%>' data-itname='<%=list.get(i).getItName()%>'  onclick='setHeadSeqRequest(this); getPartsList(this); resetForm()'>
+		 <tr data-fn-name='getrepairform(headElement)' data-key='<%=list.get(i).getId()%>' data-itid='<%=list.get(i).getItId()%>' data-productstate='<%=list.get(i).getState()%>' data-itname='<%=list.get(i).getItName()%>'  onclick='setHeadSeqRequest(this); getPartsList(this); resetForm()'>
 		 	<td><%=list.get(i).getId()%></td>
 		 	<td><%=list.get(i).getItName()%></td>
 		 	<td><%=list.get(i).getState()%></td>
